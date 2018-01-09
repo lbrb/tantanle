@@ -281,7 +281,6 @@ export default class Main {
   * 3=>小球变猛
   * 4=>小球变快
   * 5=>小球变慢
-  * 6=>小球变火
   */
   changeBySweet(sweet) {
     let player = databus.player
@@ -311,7 +310,31 @@ export default class Main {
         }
         break
       case 3:
-
+        if(databus.balls && databus.balls.length>0){
+          let ball
+          for(let i=0;i<databus.balls.length;i++){
+            ball = databus.balls[i]
+            ball.collideParams = 9
+          }
+        }
+        break
+      case 4:
+        if (databus.balls && databus.balls.length > 0) {
+          let ball
+          for (let i = 0; i < databus.balls.length; i++) {
+            ball = databus.balls[i]
+            ball.speed += 2
+          }
+        }
+        break
+      case 5:
+        if (databus.balls && databus.balls.length > 0) {
+          let ball
+          for (let i = 0; i < databus.balls.length; i++) {
+            ball = databus.balls[i]
+            ball.speed -= 2
+          }
+        }
         break
       default:
     }
