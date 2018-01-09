@@ -39,11 +39,12 @@ export default class Block extends Sprite {
     let ran = Math.random()
     //一行最多能放几个方块
     if (ran > 0.9) {
-      this.type = 3
+      this.collideParams = 7
+
     } else if (ran > 0.8) {
-      this.type = 2
+      this.collideParams = 6
     } else {
-      this.type = 1
+      this.collideParams = 5
     }
 
     this.x = startX + (this.index % maxNumPerLine) * BLOCK_WIDTH
@@ -57,7 +58,7 @@ export default class Block extends Sprite {
   render(ctx) {
     if (!this.visible)
       return
-    if(this.type == 3){
+    if (this.collideParams > 5){
       ctx.drawImage(
         this.img,
         BLOCK_X3,
@@ -69,7 +70,7 @@ export default class Block extends Sprite {
         BLOCK_WIDTH,
         BLOCK_HEIGHT
       )
-    } else if(this.type == 2) {
+    } else if (this.collideParams == 5) {
       ctx.drawImage(
         this.img,
         BLOCK_X2,
@@ -96,19 +97,39 @@ export default class Block extends Sprite {
     }
     
   }
-  //碰撞之后的处理
-  collide(){
-    if(this.type == 3){
-      return
-    } else if(this.type == 2) {
-      this.type =1
-    } else {
+
+  /**
+   * 碰撞之后的处理
+   * collideParams = 5 碰撞即可消灭
+   * collideParams = 6 碰撞降级到5，下次在碰撞可消灭
+   * collideParams = 7 碰撞不降级，只可被比7大的sprite消灭
+   * 
+   */
+  collide(sprite){
+    //是否显示 处理
+    if (this.collideParams == sprite.collideParams) {
+      this.visible = false
+    } else if (this.collideParams <= sprite.collideParams) {
       this.visible = false
     }
+
+    //碰撞参数相差大于1，可直接消灭
+    if ((sprite.collideParams - this.collideParams) > 1 ){
+      this.visible = false
+    //碰撞参数相差1，方块降级
+    } else if ((sprite.collideParams - this.collideParams) == 1) {
+      this.collideParams--
+    } else {
+      
+    }
+  }
+
+  canDieOut(){
+    return this.visible && this.collideParams <=7
   }
 
   toString(){
     return "[block] x:" + this.x + ", y:" + this.y + "screenWidth:" + screenWidth + " screenHeight:" + screenHeight
   }
-
+  
 }

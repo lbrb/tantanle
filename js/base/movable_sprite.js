@@ -26,7 +26,10 @@ export default class MovableSprite extends Sprite{
     }
   } 
 
-  changeAngle(sprite) {
+  collide(sprite) {
+    if (this.collideParams > sprite.collideParams){
+      return 
+    }
     let ball_x = this.x + this.width / 2
     let ball_y = this.y + this.height / 2
     let sprite_up = sprite.y
@@ -40,6 +43,7 @@ export default class MovableSprite extends Sprite{
     let offRight = Math.abs(ball_x - sprite_right)
 
     let minOff = Math.min(offUp, offDown, offLeft, offRight)
+
     // console.log("ball_x:" + ball_x + ", ball_y:" + ball_y + ", sprite_up:" + sprite_up + ", sprite_down:" + sprite_down + ", sprite_left:" + sprite_left + ", sprite_right:" + sprite_right)
     // console.log("minOff:" + minOff + ", offUp:" + offUp + ", offDown:" + offDown + ", offLeft:" + offLeft + ", offRight:" + offRight)
 
@@ -62,5 +66,5 @@ export default class MovableSprite extends Sprite{
       this.angle = 180 - this.angle
       return
     }
-  }
+  }  
 } 

@@ -56,7 +56,7 @@ export default class Main {
     let player = new Player2()
     databus.player = player
 
-    let ball = new Ball()
+    let ball = pool.getItemByClass(Ball)
     ball.init(player)
     databus.balls.push(ball)
 
@@ -69,7 +69,6 @@ export default class Main {
   genSweet(sprite) {
     let sweet = pool.getItemByClass(Sweet)
     sweet.init(sprite)
-    console.log(sweet)
     return sweet
   }
 
@@ -90,9 +89,12 @@ export default class Main {
           block = databus.blocks[j]
           if (block.isCollideWith(ball)) {
             console.log("ball VS block")
-            ball.changeAngle(block)
-            block.collide()
-            databus.sweets.push(this.genSweet(block))
+            ball.collide(block)
+            block.collide(ball)
+            let ran = Math.random()*10
+            if(ran>5&&databus.sweets.length<20){
+              databus.sweets.push(this.genSweet(block))
+            }
             break
           }
         }
@@ -101,7 +103,7 @@ export default class Main {
         let player = databus.player
         if (player.isCollideWith(ball)) {
           console.log("ball VS Player")
-          ball.changeAngle(databus.player)
+          ball.collide(databus.player)
         }
 
         //ball VS Wall
@@ -110,7 +112,7 @@ export default class Main {
           wall = databus.walls[j]
           if (wall.isCollideWith(ball)) {
             console.log("ball VS wall")
-            ball.changeAngle(wall)
+            ball.collide(wall)
             break
           }
         }
@@ -128,7 +130,7 @@ export default class Main {
           wall = databus.walls[j]
           if (wall.isCollideWith(sweet)) {
             console.log("sweet VS wall")
-            sweet.changeAngle(wall)
+            sweet.collide(wall)
             break
           }
         }
@@ -171,16 +173,11 @@ export default class Main {
     this.render(databus.balls)
 
     //sweet
-    if(databus.frame % 20 == 0){
-      console.log(databus.sweets[0])
-    }
     this.render(databus.sweets)
   }
 
   // 游戏逻辑更新主函数
   updateAll() {
-    //ball
-    this.update(databus.balls)
     //sweet
     let sweet
     if (databus.sweets.length > 0) {
@@ -197,6 +194,24 @@ export default class Main {
         }
       }
     }
+
+    //ball
+    let ball
+    if (databus.balls.length > 0) {
+      for (let i = 0; i < databus.balls.length; i++) {
+        ball = databus.balls[i]
+        ball.update()
+
+        //超出界面，回收
+        if (ball.y > screenHeight) {
+          console.log("off screenHeight recover ball")
+          ball.visible = false
+          pool.recover(Ball, ball)
+          databus.balls.splice(i, 1)
+        }
+      }
+    }
+    
     //碰撞检测
     this.collisionDetection()
   }
@@ -260,37 +275,43 @@ export default class Main {
   /**
   * sweet 糖果
   * type
-  * 1=>变长
-  * 2=>变短
-  * 3=>小球变多
-  * 4=>小球变猛
-  * 5=>小球变快
-  * 6=>小球变慢
-  * 7=>小球变火
+  * 0=>变长
+  * 1=>变短
+  * 2=>小球变多
+  * 3=>小球变猛
+  * 4=>小球变快
+  * 5=>小球变慢
+  * 6=>小球变火
   */
   changeBySweet(sweet) {
     let player = databus.player
     switch(sweet.sweetType){
-      case 1:
+      case 0:
         player.width *=2
         if(player.width>screenWidth){
           player.width = screenWidth
         }
         break
-      case 2:
+      case 1:
         player.width /= 2
         if (player.width < 10) {
           player.width = 10
         }
         break
-      case 3:
+      case 2:
         let ball
         let num = 2
-        for(let i=0; i<num; i++){
-          ball = new Ball()
-          ball.init(databus.player)
-          databus.balls.push(ball)
+        //界面上最多有20个ball
+        if(databus.balls.length < 20){
+          for (let i = 0; i < num; i++) {
+            ball = pool.getItemByClass(Ball)
+            ball.init(databus.player)
+            databus.balls.push(ball)
+          }
         }
+        break
+      case 3:
+
         break
       default:
     }
@@ -300,7 +321,7 @@ export default class Main {
     let block
     for(let i = 0;i<databus.blocks.length;i++){
       block = databus.blocks[i]
-      if (block.visible && block.type<3){
+      if (block.canDieOut()){
         return false
       }
     }
@@ -309,7 +330,7 @@ export default class Main {
 
   showSuccess(){
     wx.showModal({
-      title: '闯关失败',
+      title: '闯关成功',
       content: 'true',
       success: function(){
         console.log("adfsdf")

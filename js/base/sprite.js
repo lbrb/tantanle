@@ -1,5 +1,8 @@
 /**
  * 游戏基础的精灵类
+ * collideParams：碰撞参数，当小球碰到参数等于或大于他的时候，小球会反弹；
+ *                        当小球碰到参数小于他的时候，小球会义无反顾的往前走；
+ *                        默认：小球=5，糖果=5， 墙=10 ，一级砖=5， 二级砖=6，三级砖=7
  */
 export default class Sprite {
   constructor(imgSrc = '', width=  0, height = 0, x = 0, y = 0) {
@@ -11,6 +14,8 @@ export default class Sprite {
 
     this.x = x
     this.y = y
+
+    this.collideParams = 5
 
     this.visible = true
   }
@@ -41,16 +46,22 @@ export default class Sprite {
    * @param{Sprite} sp: Sptite的实例
    */
   isCollideWith(sp) {
-    let spX = sp.x + sp.width / 2
-    let spY = sp.y + sp.height / 2
-
     if ( !this.visible || !sp.visible )
       return false
+
+    let spX = sp.x + sp.width / 2
+    let spY = sp.y + sp.height / 2
 
     return !!(   spX >= this.x
               && spX <= this.x + this.width
               && spY >= this.y
               && spY <= this.y + this.height  )
+  }
+  /**
+   * 碰撞逻辑的处理
+   */
+  collide(sprite){
+
   }
 
   toString(){

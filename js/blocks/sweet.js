@@ -1,13 +1,13 @@
 /**
 * sweet 糖果
 * type
-* 1=>变长
-* 2=>变短
-* 3=>小球变多
-* 4=>小球变猛
-* 5=>小球变快
-* 6=>小球变慢
-* 7=>小球变火
+* 0=>变长
+* 1=>变短
+* 2=>小球变多
+* 3=>小球变猛
+* 4=>小球变快
+* 5=>小球变慢
+* 6=>小球变火
 */
 
 import MovableSprite from './../base/movable_sprite.js'
@@ -24,14 +24,14 @@ const screenHeight = window.innerHeight
 export default class Sweet extends MovableSprite {
 
   constructor() {
-    super(IMG_SRC, WIDTH, HEIGHT, 0, 0)
+    super(IMG_SRC, 11, 12, 0, 0)
     this.speed = 2
     this.sweetType = 1
   }
 
   init(sprite) {
     this.visible = true
-    this.sweetType = 3
+    this.sweetType = Math.floor(Math.random()*7)
     this.speed = Math.random() * 3 + 2
     this.x = sprite.x + sprite.width / 2
     this.y = sprite.y + sprite.height + 10
