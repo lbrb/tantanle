@@ -14,6 +14,8 @@ let ctx = canvas.getContext('2d')
 let databus = new DataBus()
 let pool = new Pool()
 
+let level = 1
+
 /**
  * 游戏主函数
  */
@@ -46,10 +48,13 @@ export default class Main {
     wall = new Wall("right")
     databus.walls.push(wall)
 
-    let num = 54
+    let num = 54 + level*10
+    if(num > 100){
+      num = 100
+    }
     let block;
     for (let i = 0; i < num; i++) {
-      block = new Block(i)
+      block = new Block(i, level)
       databus.blocks.push(block)
     }
 
@@ -352,28 +357,26 @@ export default class Main {
   }
 
   showSuccess(){
+    let that = this
     wx.showModal({
       title: '闯关成功',
-      content: 'true',
+      showCancel: false,
+      confirmText: "下一关",
       success: function(){
-        console.log("adfsdf")
+        level +=1
+        that.restart()
       }
     })
   }
 
   showFailure(){
-
+    let that = this
     wx.showModal({
       title: '闯关失败',
-      content: 'true',
-      success: function (res) {
-        console.log("adfsdf")
-      },
-      fail: function(){
-        console.log("adfsdf")
-      },
-      complete: function(){
-        console.log("adfsdf")
+      showCancel: false,
+      confirmText:"重新玩",
+      success: function () {
+        that.restart()
       }
     })
   }

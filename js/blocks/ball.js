@@ -67,6 +67,8 @@ export default class Ball extends MovalbeSprite {
     this.y = sprite.y - 10
     this.angle = Math.random()*160 + 10 
     this.hasCollide = false
+    this.visible = true
+    this.speed = 6
   }
 
   collide(sprite) {

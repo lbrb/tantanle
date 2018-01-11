@@ -28,20 +28,21 @@ const startX = 8
 
 export default class Block extends Sprite {
 
-  constructor(index = 0) {
+  constructor(index = 0, level=1) {
 
     super(BLOCK_IMG_SRC)
     this.index = index;
+    this.level = level;
     this.init()
   }
 
   init(){
-    let ran = Math.random()
-    //一行最多能放几个方块
-    if (ran > 0.9) {
+    let ran = Math.random()*10
+    ran = ran+this.level*0.5
+    //黑砖
+    if (ran > 9) {
       this.collideParams = 7
-
-    } else if (ran > 0.8) {
+    } else if (ran > 6) {
       this.collideParams = 6
     } else {
       this.collideParams = 5
@@ -58,7 +59,7 @@ export default class Block extends Sprite {
   render(ctx) {
     if (!this.visible)
       return
-    if (this.collideParams > 5){
+    if (this.collideParams ==7){
       ctx.drawImage(
         this.img,
         BLOCK_X3,
@@ -70,7 +71,7 @@ export default class Block extends Sprite {
         BLOCK_WIDTH,
         BLOCK_HEIGHT
       )
-    } else if (this.collideParams == 5) {
+    } else if (this.collideParams == 6) {
       ctx.drawImage(
         this.img,
         BLOCK_X2,
